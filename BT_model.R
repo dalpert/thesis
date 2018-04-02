@@ -11,6 +11,7 @@ for (i in yrs) {
 }
 nrow(df)
 
+df <- read_excel("~/Desktop/Thesis/data/BT_data/WL_data_2017_full.xlsx")
 
 covariates = df[!duplicated(df$team_full),c(1,5:7)]
 covariates$ones = 1
@@ -21,24 +22,25 @@ row.names(covariates) = covariates$team_full
 
 nba.df = list(games=games,covariates=covariates)
 names(nba.df$games) = c("L", "W", "team2", "team1")
-levels(nba.df$games$team1)=levels(nba.df$games$team2)
+levels(as.factor(nba.df$games$team1))=levels(as.factor(nba.df$games$team2))
 nba.bt3 <- BTm(cbind(W,L), as.factor(team1), as.factor(team2),
                ~ ones[..] + gini[..] + I(gini[..]^2) + (1|..),
                data = nba.df)
 
 nba.bt2 <- BTm(cbind(W,L), as.factor(team1), as.factor(team2),
-               ~ ones[..] + gini[..] + (1|..),
+               ~ gini[..] + (1|..),
                data = nba.df)
-
-
-anova(nba.bt2, nba.bt3)
-
-fit <- BTm(cbind(W,L), as.factor(team1), as.factor(team2), 
-           data=nba.df, id = 'team')
 
 nba.bt1 <- BTm(cbind(W,L), as.factor(team1), as.factor(team2),
                ~ ones[..] + (1|..),
                data = nba.df)
+
+str(nba.df$games$team1)
+str(nba.df$games$team2)
+
+anova(nba.bt1, nba.bt2)
+anova(nba.bt1, nba.bt3)
+anova(nba.bt2, nba.bt3)
 
 #nba.bt1 <- BTm(cbind(W,L), as.factor(team1), as.factor(team2),
 #               ~ ..,

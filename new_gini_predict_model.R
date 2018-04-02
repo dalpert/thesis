@@ -29,5 +29,10 @@ preds = predict(fit3, test)
 cor(test$gini_true, test$l_gini)
 cor(test$gini_true, preds)
 
-full_preds = predict()
+full_preds = predict(fit3, dat)
+
+dat$full_preds = full_preds
+head(dat)
+
+write_xlsx(dat, "~/Desktop/Thesis/data/gini_preds_final.xlsx")
 

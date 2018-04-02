@@ -73,6 +73,7 @@ df2 = df
 
 wins = df2$W
 losses = df2$L
+df2$ones = 1
 outcome = cbind(wins, losses)
 
 df2$team=as.factor(df2$team)
@@ -94,3 +95,18 @@ fit2 <- BTm(outcome, player1 = team, player2 = opp, formula = ~ team + gini,
 #  Compare the fit of these two models:
 anova(fit, fit2)
 
+
+## Rader's code
+nba.bt3 <- BTm(outcome, as.factor(team), as.factor(opp),
+               ~ ones[..] + gini[..] + I(gini[..]^2) + (1|..),
+               data = df2)
+
+nba.bt2 <- BTm(outcome, as.factor(team), as.factor(opp),
+               ~ ones[..] + gini[..] + (1|..),
+               data = df2)
+
+nba.bt1 <- BTm(outcome, as.factor(team), as.factor(opp),
+               ~ ones[..] + (1|..),
+               data = df2)
+
+anova(nba.bt1, nba.bt2)
